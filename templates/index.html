@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestão Financeira</title>
+<link rel="manifest" href="/static/manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Gestão">
+<link rel="apple-touch-icon" href="/static/icon-192.png">
+<meta name="theme-color" content="#0f1117">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #222537;
+    --border: #2e3248;
+    --entrada: #00e5a0;
+    --saida: #ff5f7e;
+    --lucro: #7c8fff;
+    --marketing: #ff9f43;
+    --papelaria: #54a0ff;
+    --impostos: #ff6b81;
+    --outros: #a29bfe;
+    --text: #e8eaf6;
+    --muted: #7b82a8;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.5px; }
+  .logo span { color: var(--entrada); }
+
+  /* NAV MESES */
+  .nav-mes {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface2); border-radius: 999px;
+    padding: 6px 14px; font-size: 0.9rem; font-weight: 500;
+  }
+  .nav-mes a {
+    color: var(--muted); text-decoration: none; font-size: 1.1rem;
+    padding: 0 4px; transition: color .2s;
+  }
+  .nav-mes a:hover { color: var(--text); }
+  .nav-mes strong { color: var(--entrada); min-width: 80px; text-align: center; }
+
+  /* MAIN */
+  main { max-width: 960px; margin: 0 auto; padding: 24px 16px 80px; }
+
+  /* CARDS RESUMO */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  @media(min-width: 600px) {
+    .cards { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 16px;
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+  .card.c-entrada::before { background: var(--entrada); }
+  .card.c-saida::before   { background: var(--saida); }
+  .card.c-lucro::before   { background: var(--lucro); }
+  .card.c-rent::before    { background: var(--marketing); }
+
+  .card-label {
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+  }
+  .card-valor {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.35rem; font-weight: 500;
+  }
+  .card.c-entrada .card-valor { color: var(--entrada); }
+  .card.c-saida   .card-valor { color: var(--saida); }
+  .card.c-lucro   .card-valor { color: var(--lucro); }
+  .card.c-rent    .card-valor { color: var(--marketing); }
+
+  /* CATEGORIAS */
+  .categorias {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+    margin-bottom: 24px;
+  }
+  .sec-title {
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 14px;
+  }
+  .cat-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 10px;
+  }
+  .cat-label {
+    font-size: 0.85rem; color: var(--muted);
+    min-width: 160px;
+  }
+  .bar-bg {
+    flex: 1; height: 8px; background: var(--surface2);
+    border-radius: 99px; overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%; border-radius: 99px;
+    transition: width .6s cubic-bezier(.4,0,.2,1);
+  }
+  .cat-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem; color: var(--text);
+    min-width: 90px; text-align: right;
+  }
+
+  /* FORMULÁRIO */
+  .form-section {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+    margin-bottom: 24px;
+  }
+  .tabs {
+    display: flex; gap: 8px; margin-bottom: 16px;
+  }
+  .tab-btn {
+    flex: 1; padding: 10px; border: 1px solid var(--border);
+    border-radius: var(--radius-sm); background: transparent;
+    color: var(--muted); font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 600; cursor: pointer;
+    transition: all .2s;
+  }
+  .tab-btn.active-entrada {
+    background: rgba(0,229,160,.12); border-color: var(--entrada);
+    color: var(--entrada);
+  }
+  .tab-btn.active-saida {
+    background: rgba(255,95,126,.12); border-color: var(--saida);
+    color: var(--saida);
+  }
+
+  .form-grid {
+    display: grid; gap: 10px;
+    grid-template-columns: 1fr 1fr;
+  }
+  .form-grid .full { grid-column: 1 / -1; }
+
+  label {
+    display: block; font-size: 0.75rem; font-weight: 600;
+    letter-spacing: .6px; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 5px;
+  }
+  input, select {
+    width: 100%; padding: 11px 14px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 0.95rem;
+    outline: none; transition: border-color .2s;
+  }
+  input:focus, select:focus {
+    border-color: var(--entrada);
+  }
+  select option { background: var(--surface2); }
+
+  .btn-submit {
+    width: 100%; padding: 13px;
+    border: none; border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem; font-weight: 700; cursor: pointer;
+    margin-top: 6px; transition: opacity .2s;
+  }
+  .btn-submit:hover { opacity: 0.85; }
+  .btn-entrada { background: var(--entrada); color: #0f1117; }
+  .btn-saida   { background: var(--saida);   color: #fff; }
+
+  /* LISTA TRANSAÇÕES */
+  .lista-section {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+  }
+  .lista-header {
+    padding: 16px 20px; border-bottom: 1px solid var(--border);
+  }
+  .transacao {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 20px; border-bottom: 1px solid var(--border);
+    transition: background .15s;
+  }
+  .transacao:last-child { border-bottom: none; }
+  .transacao:hover { background: rgba(255,255,255,.03); }
+
+  .tipo-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot-entrada { background: var(--entrada); }
+  .dot-saida   { background: var(--saida); }
+
+  .t-info { flex: 1; min-width: 0; }
+  .t-desc {
+    font-size: 0.9rem; font-weight: 500;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .t-meta {
+    font-size: 0.75rem; color: var(--muted); margin-top: 2px;
+  }
+  .t-cat {
+    font-size: 0.7rem; font-weight: 600; padding: 2px 7px;
+    border-radius: 99px; margin-top: 4px; display: inline-block;
+  }
+  .cat-marketing  { background: rgba(255,159,67,.18);  color: var(--marketing); }
+  .cat-papelaria  { background: rgba(84,160,255,.18);  color: var(--papelaria); }
+  .cat-impostos   { background: rgba(255,107,129,.18); color: var(--impostos); }
+  .cat-outros     { background: rgba(162,155,254,.18); color: var(--outros); }
+
+  .t-valor {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.95rem; font-weight: 600; flex-shrink: 0;
+  }
+  .v-entrada { color: var(--entrada); }
+  .v-saida   { color: var(--saida); }
+
+  .btn-del {
+    background: none; border: none; color: var(--muted);
+    cursor: pointer; font-size: 1rem; padding: 4px;
+    border-radius: 6px; transition: all .2s;
+  }
+  .btn-del:hover { color: var(--saida); background: rgba(255,95,126,.1); }
+
+  .empty {
+    padding: 40px; text-align: center;
+    color: var(--muted); font-size: 0.9rem;
+  }
+
+  /* GRÁFICO */
+  .grafico-section {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+    margin-bottom: 24px;
+  }
+  #grafico { width: 100%; height: 180px; }
+
+  /* NEGATIVO */
+  .negativo { color: var(--saida) !important; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">💼 Gestão <span>Financeira</span></div>
+
+  {% set mes_ant = mes - 1 if mes > 1 else 12 %}
+  {% set ano_ant = ano if mes > 1 else ano - 1 %}
+  {% set mes_prox = mes + 1 if mes < 12 else 1 %}
+  {% set ano_prox = ano if mes < 12 else ano + 1 %}
+
+  <div class="nav-mes">
+    <a href="{{ url_for('index', ano=ano_ant, mes=mes_ant) }}">&#8249;</a>
+    <strong>{{ meses_nomes[mes-1] }} {{ ano }}</strong>
+    {% if not (ano == hoje.year and mes == hoje.month) %}
+    <a href="{{ url_for('index', ano=ano_prox, mes=mes_prox) }}">&#8250;</a>
+    {% else %}
+    <span style="color:var(--border);padding:0 4px">&#8250;</span>
+    {% endif %}
+  </div>
+</header>
+
+<main>
+
+  <!-- CARDS -->
+  <div class="cards">
+    <div class="card c-entrada">
+      <div class="card-label">Entradas</div>
+      <div class="card-valor">R$ {{ "%.2f"|format(resumo.entradas) }}</div>
+    </div>
+    <div class="card c-saida">
+      <div class="card-label">Saídas</div>
+      <div class="card-valor">R$ {{ "%.2f"|format(resumo.saidas) }}</div>
+    </div>
+    <div class="card c-lucro">
+      <div class="card-label">Lucro</div>
+      <div class="card-valor {% if resumo.lucro < 0 %}negativo{% endif %}">
+        R$ {{ "%.2f"|format(resumo.lucro) }}
+      </div>
+    </div>
+    <div class="card c-rent">
+      <div class="card-label">Rentabilidade</div>
+      <div class="card-valor {% if resumo.rentabilidade < 0 %}negativo{% endif %}">
+        {{ "%.1f"|format(resumo.rentabilidade) }}%
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORIAS DE SAÍDA -->
+  {% if resumo.saidas_por_categoria %}
+  <div class="categorias">
+    <div class="sec-title">Despesas por Categoria</div>
+    {% set cat_cores = {
+      'Marketing': '#ff9f43',
+      'Papelaria / Escritório': '#54a0ff',
+      'Impostos / Taxas': '#ff6b81',
+      'Outros': '#a29bfe'
+    } %}
+    {% for cat, val in resumo.saidas_por_categoria.items()|sort(attribute='1', reverse=True) %}
+    {% set pct = (val / resumo.saidas * 100) if resumo.saidas > 0 else 0 %}
+    {% set cor = cat_cores.get(cat, '#a29bfe') %}
+    <div class="cat-row">
+      <span class="cat-label">{{ cat }}</span>
+      <div class="bar-bg">
+        <div class="bar-fill" style="width:{{ pct }}%; background:{{ cor }};"></div>
+      </div>
+      <span class="cat-val">R$ {{ "%.2f"|format(val) }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- GRÁFICO 6 MESES -->
+  <div class="grafico-section">
+    <div class="sec-title">Últimos 6 Meses</div>
+    <canvas id="grafico"></canvas>
+  </div>
+
+  <!-- FORMULÁRIO -->
+  <div class="form-section">
+    <div class="sec-title">Nova Transação</div>
+    <div class="tabs">
+      <button class="tab-btn active-entrada" id="tab-entrada" onclick="setTipo('entrada')">↑ Entrada</button>
+      <button class="tab-btn" id="tab-saida" onclick="setTipo('saida')">↓ Saída</button>
+    </div>
+
+    <form method="POST" action="/adicionar" id="form-transacao">
+      <input type="hidden" name="tipo" id="input-tipo" value="entrada">
+      <div class="form-grid">
+        <div class="full">
+          <label>Descrição</label>
+          <input type="text" name="descricao" placeholder="Ex: Venda produto X" required>
+        </div>
+        <div>
+          <label>Valor (R$)</label>
+          <input type="number" name="valor" step="0.01" min="0.01" placeholder="0,00" required>
+        </div>
+        <div>
+          <label>Data</label>
+          <input type="date" name="data" value="{{ hoje.isoformat() }}" required>
+        </div>
+        <div class="full" id="campo-categoria" style="display:none">
+          <label>Categoria</label>
+          <select name="categoria">
+            {% for cat in categorias %}
+            <option value="{{ cat }}">{{ cat }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="full">
+          <button type="submit" class="btn-submit btn-entrada" id="btn-submit">
+            + Adicionar Entrada
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- LISTA -->
+  <div class="lista-section">
+    <div class="lista-header">
+      <div class="sec-title">Lançamentos — {{ meses_nomes[mes-1] }}/{{ ano }}</div>
+    </div>
+
+    {% if transacoes %}
+      {% for t in transacoes %}
+      {% set cat_class = {
+        'Marketing': 'cat-marketing',
+        'Papelaria / Escritório': 'cat-papelaria',
+        'Impostos / Taxas': 'cat-impostos',
+        'Outros': 'cat-outros'
+      } %}
+      <div class="transacao">
+        <div class="tipo-dot dot-{{ t.tipo }}"></div>
+        <div class="t-info">
+          <div class="t-desc">{{ t.descricao }}</div>
+          <div class="t-meta">{{ t.data }}</div>
+          {% if t.categoria %}
+          <span class="t-cat {{ cat_class.get(t.categoria, 'cat-outros') }}">{{ t.categoria }}</span>
+          {% endif %}
+        </div>
+        <div class="t-valor v-{{ t.tipo }}">
+          {{ '+' if t.tipo == 'entrada' else '-' }}R$ {{ "%.2f"|format(t.valor) }}
+        </div>
+        <a href="/excluir/{{ t.id }}" class="btn-del"
+           onclick="return confirm('Excluir este lançamento?')">✕</a>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty">Nenhum lançamento neste mês.<br>Adicione sua primeira transação acima!</div>
+    {% endif %}
+  </div>
+
+</main>
+
+<script>
+// TABS
+function setTipo(tipo) {
+  document.getElementById('input-tipo').value = tipo;
+  const btnE = document.getElementById('tab-entrada');
+  const btnS = document.getElementById('tab-saida');
+  const cat  = document.getElementById('campo-categoria');
+  const btn  = document.getElementById('btn-submit');
+
+  if (tipo === 'entrada') {
+    btnE.className = 'tab-btn active-entrada';
+    btnS.className = 'tab-btn';
+    cat.style.display = 'none';
+    btn.className = 'btn-submit btn-entrada';
+    btn.textContent = '+ Adicionar Entrada';
+  } else {
+    btnS.className = 'tab-btn active-saida';
+    btnE.className = 'tab-btn';
+    cat.style.display = 'block';
+    btn.className = 'btn-submit btn-saida';
+    btn.textContent = '+ Adicionar Saída';
+  }
+}
+
+// GRÁFICO SIMPLES
+async function desenharGrafico() {
+  const resp = await fetch('/api/grafico');
+  const dados = await resp.json();
+  const canvas = document.getElementById('grafico');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+  canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  const W = canvas.offsetWidth, H = canvas.offsetHeight;
+
+  const maxVal = Math.max(...dados.flatMap(d => [d.entradas, d.saidas, Math.abs(d.lucro)]), 1);
+  const pad = { top: 20, bottom: 36, left: 10, right: 10 };
+  const barW = (W - pad.left - pad.right) / dados.length;
+  const chartH = H - pad.top - pad.bottom;
+  const cores = { entradas: '#00e5a0', saidas: '#ff5f7e', lucro: '#7c8fff' };
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Grade
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  [0.25, 0.5, 0.75, 1].forEach(f => {
+    const y = pad.top + chartH * (1 - f);
+    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(W - pad.right, y); ctx.stroke();
+  });
+
+  dados.forEach((d, i) => {
+    const x = pad.left + i * barW;
+    const bw = barW * 0.28;
+    const gap = barW * 0.04;
+
+    // Entrada
+    const hE = (d.entradas / maxVal) * chartH;
+    ctx.fillStyle = cores.entradas;
+    ctx.beginPath();
+    ctx.roundRect(x + gap, pad.top + chartH - hE, bw, hE, [4,4,0,0]);
+    ctx.fill();
+
+    // Saída
+    const hS = (d.saidas / maxVal) * chartH;
+    ctx.fillStyle = cores.saidas;
+    ctx.beginPath();
+    ctx.roundRect(x + gap + bw + gap, pad.top + chartH - hS, bw, hS, [4,4,0,0]);
+    ctx.fill();
+
+    // Lucro linha
+    const ly = pad.top + chartH - (Math.max(d.lucro,0) / maxVal) * chartH;
+    if (i > 0) {
+      const prevD = dados[i-1];
+      const prevLy = pad.top + chartH - (Math.max(prevD.lucro,0) / maxVal) * chartH;
+      const cx = x - barW + gap + bw;
+      ctx.beginPath();
+      ctx.moveTo(cx, prevLy);
+      ctx.lineTo(x + gap + bw * 1.5, ly);
+      ctx.strokeStyle = cores.lucro;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+    ctx.beginPath();
+    ctx.arc(x + gap + bw * 1.5, ly, 4, 0, Math.PI*2);
+    ctx.fillStyle = cores.lucro; ctx.fill();
+
+    // Label mês
+    ctx.fillStyle = 'rgba(123,130,168,0.9)';
+    ctx.font = '500 11px DM Sans, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(d.mes, x + barW/2, H - 8);
+  });
+
+  // Legenda
+  const leg = [['Entrada', cores.entradas], ['Saída', cores.saidas], ['Lucro', cores.lucro]];
+  let lx = pad.left;
+  leg.forEach(([label, cor]) => {
+    ctx.fillStyle = cor;
+    ctx.fillRect(lx, 4, 10, 10);
+    ctx.fillStyle = 'rgba(123,130,168,0.9)';
+    ctx.font = '500 10px DM Sans, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(label, lx + 14, 13);
+    lx += 70;
+  });
+}
+
+desenharGrafico();
+window.addEventListener('resize', desenharGrafico);
+
+// Registrar Service Worker (PWA)
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/static/sw.js');
+}
+</script>
+</body>
+</html>
