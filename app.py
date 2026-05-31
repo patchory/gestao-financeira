@@ -5,7 +5,7 @@ from datetime import datetime, date
 from collections import defaultdict
 
 app = Flask(__name__)
-DB_PATH = os.path.join(os.path.dirname(__file__), 'empresa.db')
+DB_PATH = '/tmp/empresa.db'
 
 CATEGORIAS_SAIDA = [
     'Marketing',
@@ -147,8 +147,10 @@ def api_grafico():
         })
     return jsonify(dados)
 
+# Inicializa o banco sempre — funciona com gunicorn e python direto
+init_db()
+
 if __name__ == '__main__':
-    init_db()
     print("\n✅ Sistema iniciado!")
     print("👉 Abra no navegador: http://localhost:5000\n")
     app.run(debug=True, host='0.0.0.0', port=5000)
