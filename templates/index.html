@@ -21,6 +21,7 @@
     --saida: #ff5f7e;
     --lucro: #7c8fff;
     --marketing: #ff9f43;
+    --shopee: #ee4d2d;
     --papelaria: #54a0ff;
     --impostos: #ff6b81;
     --outros: #a29bfe;
@@ -109,7 +110,47 @@
   .card.c-lucro   .card-valor { color: var(--lucro); }
   .card.c-rent    .card-valor { color: var(--marketing); }
 
-  /* CATEGORIAS */
+  .card.c-ads::before    { background: var(--shopee); }
+  .card.c-ads .card-valor { color: var(--shopee); }
+  .card.c-roas::before   { background: var(--lucro); }
+  .card.c-roas .card-valor { color: var(--lucro); }
+
+  .ads-panel {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+    margin-bottom: 24px;
+    border-left: 3px solid var(--shopee);
+  }
+  .ads-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    margin-top: 14px;
+  }
+  @media(min-width: 600px) {
+    .ads-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  .ads-stat {
+    background: var(--surface2); border-radius: var(--radius-sm);
+    padding: 14px; text-align: center;
+  }
+  .ads-stat-label {
+    font-size: 0.7rem; font-weight: 600; letter-spacing: .8px;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
+  }
+  .ads-stat-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.15rem; font-weight: 600;
+  }
+  .ads-title {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .shopee-badge {
+    background: var(--shopee); color: #fff;
+    font-size: 0.65rem; font-weight: 700; padding: 2px 8px;
+    border-radius: 99px; letter-spacing: .5px;
+  }
+  .roas-bom  { color: var(--entrada); }
+  .roas-med  { color: var(--marketing); }
+  .roas-ruim { color: var(--saida); }
   .categorias {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 20px;
@@ -236,6 +277,7 @@
     border-radius: 99px; margin-top: 4px; display: inline-block;
   }
   .cat-marketing  { background: rgba(255,159,67,.18);  color: var(--marketing); }
+  .cat-shopee     { background: rgba(238,77,45,.18);   color: var(--shopee); }
   .cat-papelaria  { background: rgba(84,160,255,.18);  color: var(--papelaria); }
   .cat-impostos   { background: rgba(255,107,129,.18); color: var(--impostos); }
   .cat-outros     { background: rgba(162,155,254,.18); color: var(--outros); }
@@ -269,6 +311,56 @@
 
   /* NEGATIVO */
   .negativo { color: var(--saida) !important; }
+
+  /* META */
+  .meta-section {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px; margin-bottom: 24px;
+  }
+  .meta-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .meta-label { font-size: .82rem; color: var(--muted); min-width: 100px; }
+  .meta-bar-bg { flex: 1; height: 10px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
+  .meta-bar-fill { height: 100%; border-radius: 99px; transition: width .6s; }
+  .meta-pct { font-family: 'DM Mono', monospace; font-size: .8rem; min-width: 48px; text-align: right; }
+  .meta-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .meta-form .full { grid-column: 1/-1; }
+  .btn-meta { width: 100%; padding: 11px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: .9rem; font-weight: 600; cursor: pointer; transition: all .2s; }
+  .btn-meta:hover { border-color: var(--entrada); color: var(--entrada); }
+  details summary { cursor: pointer; font-size: .78rem; color: var(--muted); margin-top: 10px; }
+
+  /* PIZZA */
+  .pizza-section {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px; margin-bottom: 24px;
+    display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+  }
+  #pizza-canvas { width: 140px; height: 140px; flex-shrink: 0; }
+  .pizza-legend { flex: 1; min-width: 160px; }
+  .pizza-item { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: .83rem; }
+  .pizza-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .pizza-name { flex: 1; color: var(--muted); }
+  .pizza-pct { font-family: 'DM Mono', monospace; font-size: .8rem; }
+
+  /* CONTAS PENDENTES */
+  .contas-alert {
+    background: rgba(255,159,67,.08); border: 1px solid rgba(255,159,67,.3);
+    border-radius: var(--radius); padding: 16px 20px; margin-bottom: 24px;
+  }
+  .contas-alert-title { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .contas-alert a.ver-todas { font-size: .78rem; color: var(--marketing); text-decoration: none; }
+  .alerta-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,159,67,.1); font-size: .83rem; }
+  .alerta-row:last-child { border-bottom: none; }
+
+  /* BOTÕES NAV EXTRA */
+  .nav-extra { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+  .nav-btn { flex: 1; min-width: 120px; padding: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--muted); text-decoration: none; font-family: 'DM Sans', sans-serif; font-size: .85rem; font-weight: 600; text-align: center; transition: all .2s; cursor: pointer; display: block; }
+  .nav-btn:hover { border-color: var(--entrada); color: var(--entrada); }
+
+  /* IMPORTAR SHOPEE */
+  .importar-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 24px; }
+  .file-input-label { display: block; width: 100%; padding: 12px; background: var(--surface2); border: 1px dashed var(--border); border-radius: var(--radius-sm); text-align: center; color: var(--muted); font-size: .85rem; cursor: pointer; transition: all .2s; margin-bottom: 10px; }
+  .file-input-label:hover { border-color: var(--shopee); color: var(--shopee); }
+  input[type=file] { display: none; }
 </style>
 </head>
 <body>
@@ -318,12 +410,104 @@
     </div>
   </div>
 
+  <!-- NAVEGAÇÃO EXTRA -->
+  <div class="nav-extra">
+    <a href="/contas" class="nav-btn">💳 Contas a Pagar/Receber</a>
+    <a href="/relatorio-anual?ano={{ ano }}" class="nav-btn">📊 Relatório Anual</a>
+    <a href="/exportar-pdf?ano={{ ano }}&mes={{ mes }}" class="nav-btn" target="_blank">🖨️ Exportar PDF</a>
+    <a href="#importar" class="nav-btn" onclick="document.getElementById('sec-importar').style.display='block';this.style.display='none'">📥 Importar Shopee</a>
+    <a href="{{ url_for('logout') }}" class="nav-btn" style="color:var(--saida);border-color:rgba(255,95,126,.3)">🚪 Sair</a>
+  </div>
+
+  <!-- CONTAS PENDENTES -->
+  {% if contas_pendentes %}
+  <div class="contas-alert">
+    <div class="contas-alert-title">
+      <div class="sec-title" style="margin-bottom:0;color:var(--marketing)">⚠️ Contas Pendentes</div>
+      <a href="/contas" class="ver-todas">Ver todas →</a>
+    </div>
+    {% for c in contas_pendentes %}
+    <div class="alerta-row">
+      <span>{{ '↓' if c.tipo=='pagar' else '↑' }} {{ c.descricao }}</span>
+      <span style="color:{{ '#ff5f7e' if c.tipo=='pagar' else '#00e5a0' }};font-family:'DM Mono',monospace;font-size:.82rem">
+        R$ {{ "%.2f"|format(c.valor) }} · {{ c.vencimento }}
+      </span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- IMPORTAR SHOPEE -->
+  <div id="sec-importar" style="display:none">
+  <div class="importar-section">
+    <div class="sec-title">📥 Importar Vendas Shopee (Excel)</div>
+    <form method="POST" action="/importar-shopee" enctype="multipart/form-data">
+      <label class="file-input-label" for="arquivo-shopee">
+        📂 Clique para selecionar o arquivo Excel da Shopee (.xlsx)
+      </label>
+      <input type="file" id="arquivo-shopee" name="arquivo" accept=".xlsx,.xls">
+      <button type="submit" class="btn-submit btn-saida" style="background:var(--shopee)">
+        ↑ Importar Vendas
+      </button>
+    </form>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:10px">
+      O arquivo deve ter a data na coluna A e o valor na coluna B. Baixe o relatório de vendas no painel da Shopee Seller.
+    </p>
+  </div>
+  </div>
+
+
+  {% if resumo.ads > 0 or true %}
+  <div class="ads-panel">
+    <div class="ads-title">
+      <div class="sec-title" style="margin-bottom:0">Shopee Ads</div>
+      <span class="shopee-badge">ADS</span>
+    </div>
+    <div class="ads-grid">
+      <div class="ads-stat">
+        <div class="ads-stat-label">Gasto em Ads</div>
+        <div class="ads-stat-val" style="color:var(--shopee)">
+          R$ {{ "%.2f"|format(resumo.ads) }}
+        </div>
+      </div>
+      <div class="ads-stat">
+        <div class="ads-stat-label">ROAS</div>
+        <div class="ads-stat-val {% if resumo.roas >= 3 %}roas-bom{% elif resumo.roas >= 1.5 %}roas-med{% else %}roas-ruim{% endif %}">
+          {% if resumo.ads > 0 %}{{ "%.2f"|format(resumo.roas) }}x{% else %}—{% endif %}
+        </div>
+      </div>
+      <div class="ads-stat">
+        <div class="ads-stat-label">% do Faturamento</div>
+        <div class="ads-stat-val" style="color:var(--muted)">
+          {% if resumo.ads > 0 %}{{ "%.1f"|format(resumo.pct_ads) }}%{% else %}—{% endif %}
+        </div>
+      </div>
+    </div>
+    {% if resumo.ads > 0 %}
+    <div style="margin-top:12px; font-size:0.78rem; color:var(--muted);">
+      {% if resumo.roas >= 3 %}
+        ✅ ROAS excelente! Para cada R$1 investido, você gerou R${{ "%.2f"|format(resumo.roas) }} em vendas.
+      {% elif resumo.roas >= 1.5 %}
+        ⚠️ ROAS razoável. Cada R$1 em Ads gerou R${{ "%.2f"|format(resumo.roas) }} em vendas. Tente otimizar as campanhas.
+      {% elif resumo.roas > 0 %}
+        🔴 ROAS baixo! Cada R$1 em Ads gerou apenas R${{ "%.2f"|format(resumo.roas) }} em vendas. Revise suas campanhas.
+      {% endif %}
+    </div>
+    {% else %}
+    <div style="margin-top:12px; font-size:0.78rem; color:var(--muted);">
+      Nenhum gasto com Shopee Ads lançado neste mês. Adicione uma saída com categoria "Shopee Ads".
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
   <!-- CATEGORIAS DE SAÍDA -->
   {% if resumo.saidas_por_categoria %}
   <div class="categorias">
     <div class="sec-title">Despesas por Categoria</div>
     {% set cat_cores = {
       'Marketing': '#ff9f43',
+      'Shopee Ads': '#ee4d2d',
       'Papelaria / Escritório': '#54a0ff',
       'Impostos / Taxas': '#ff6b81',
       'Outros': '#a29bfe'
@@ -348,7 +532,72 @@
     <canvas id="grafico"></canvas>
   </div>
 
-  <!-- FORMULÁRIO -->
+  <!-- GRÁFICO PIZZA CATEGORIAS -->
+  {% if resumo.saidas_por_categoria %}
+  <div class="pizza-section">
+    <canvas id="pizza-canvas" width="140" height="140"></canvas>
+    <div class="pizza-legend">
+      <div class="sec-title">Despesas — Pizza</div>
+      {% set pizza_cores = {'Shopee Ads':'#ee4d2d','Marketing':'#ff9f43','Papelaria / Escritório':'#54a0ff','Impostos / Taxas':'#ff6b81','Contas a Pagar':'#f0f','Outros':'#a29bfe'} %}
+      {% for cat, val in resumo.saidas_por_categoria.items()|sort(attribute='1',reverse=True) %}
+      {% set pct = (val/resumo.saidas*100) if resumo.saidas > 0 else 0 %}
+      <div class="pizza-item">
+        <div class="pizza-dot" style="background:{{ pizza_cores.get(cat,'#a29bfe') }}"></div>
+        <span class="pizza-name">{{ cat }}</span>
+        <span class="pizza-pct">{{ "%.0f"|format(pct) }}%</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- META MENSAL -->
+  <div class="meta-section">
+    <div class="sec-title">🎯 Meta Mensal — {{ meses_nomes[mes-1] }}/{{ ano }}</div>
+    {% if resumo.meta_entrada > 0 %}
+    <div class="meta-row">
+      <span class="meta-label">Faturamento</span>
+      <div class="meta-bar-bg">
+        <div class="meta-bar-fill" style="width:{{ resumo.pct_meta_entrada }}%;background:var(--entrada)"></div>
+      </div>
+      <span class="meta-pct" style="color:var(--entrada)">{{ "%.0f"|format(resumo.meta_entrada_raw) }}%</span>
+    </div>
+    {% endif %}
+    {% if resumo.meta_lucro > 0 %}
+    <div class="meta-row">
+      <span class="meta-label">Lucro</span>
+      <div class="meta-bar-bg">
+        <div class="meta-bar-fill" style="width:{{ resumo.pct_meta_lucro }}%;background:var(--lucro)"></div>
+      </div>
+      <span class="meta-pct" style="color:var(--lucro)">{{ "%.0f"|format(resumo.meta_lucro_raw) }}%</span>
+    </div>
+    {% endif %}
+    {% if resumo.meta_entrada == 0 and resumo.meta_lucro == 0 %}
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:12px">Nenhuma meta definida para este mês.</p>
+    {% endif %}
+    <details>
+      <summary>✏️ Definir meta para {{ meses_nomes[mes-1] }}/{{ ano }}</summary>
+      <form method="POST" action="/meta" style="margin-top:12px">
+        <input type="hidden" name="ano" value="{{ ano }}">
+        <input type="hidden" name="mes" value="{{ mes }}">
+        <div class="meta-form">
+          <div>
+            <label>Meta Faturamento (R$)</label>
+            <input type="number" name="meta_entrada" step="0.01" placeholder="0,00" value="{{ resumo.meta_entrada if resumo.meta_entrada > 0 else '' }}">
+          </div>
+          <div>
+            <label>Meta Lucro (R$)</label>
+            <input type="number" name="meta_lucro" step="0.01" placeholder="0,00" value="{{ resumo.meta_lucro if resumo.meta_lucro > 0 else '' }}">
+          </div>
+          <div class="full">
+            <button type="submit" class="btn-meta">💾 Salvar Meta</button>
+          </div>
+        </div>
+      </form>
+    </details>
+  </div>
+
+
   <div class="form-section">
     <div class="sec-title">Nova Transação</div>
     <div class="tabs">
@@ -380,6 +629,10 @@
           </select>
         </div>
         <div class="full">
+          <label>Observação (opcional)</label>
+          <input type="text" name="observacao" placeholder="Detalhes adicionais...">
+        </div>
+        <div class="full">
           <button type="submit" class="btn-submit btn-entrada" id="btn-submit">
             + Adicionar Entrada
           </button>
@@ -398,6 +651,7 @@
       {% for t in transacoes %}
       {% set cat_class = {
         'Marketing': 'cat-marketing',
+        'Shopee Ads': 'cat-shopee',
         'Papelaria / Escritório': 'cat-papelaria',
         'Impostos / Taxas': 'cat-impostos',
         'Outros': 'cat-outros'
@@ -406,7 +660,7 @@
         <div class="tipo-dot dot-{{ t.tipo }}"></div>
         <div class="t-info">
           <div class="t-desc">{{ t.descricao }}</div>
-          <div class="t-meta">{{ t.data }}</div>
+          <div class="t-meta">{{ t.data }}{% if t.observacao %} · {{ t.observacao }}{% endif %}</div>
           {% if t.categoria %}
           <span class="t-cat {{ cat_class.get(t.categoria, 'cat-outros') }}">{{ t.categoria }}</span>
           {% endif %}
@@ -535,6 +789,31 @@ async function desenharGrafico() {
 
 desenharGrafico();
 window.addEventListener('resize', desenharGrafico);
+
+// GRÁFICO PIZZA
+(function() {
+  const canvas = document.getElementById('pizza-canvas');
+  if (!canvas) return;
+  const cats = [
+    {% for cat, val in resumo.saidas_por_categoria.items()|sort(attribute='1',reverse=True) %}
+    { nome: "{{ cat }}", val: {{ val }}, cor: "{{ {'Shopee Ads':'#ee4d2d','Marketing':'#ff9f43','Papelaria / Escritório':'#54a0ff','Impostos / Taxas':'#ff6b81','Contas a Pagar':'#f06','Outros':'#a29bfe'}.get(cat,'#a29bfe') }}" },
+    {% endfor %}
+  ];
+  if (!cats.length) return;
+  const total = cats.reduce((a,c) => a+c.val, 0);
+  const ctx = canvas.getContext('2d');
+  const cx = 70, cy = 70, r = 60;
+  let ang = -Math.PI/2;
+  cats.forEach(c => {
+    const slice = (c.val/total)*Math.PI*2;
+    ctx.beginPath(); ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,r,ang,ang+slice);
+    ctx.closePath(); ctx.fillStyle=c.cor; ctx.fill();
+    ang+=slice;
+  });
+  ctx.beginPath(); ctx.arc(cx,cy,30,0,Math.PI*2);
+  ctx.fillStyle='#1a1d27'; ctx.fill();
+})();
 
 // Registrar Service Worker (PWA)
 if ('serviceWorker' in navigator) {

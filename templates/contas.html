@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contas — Gestão Financeira</title>
+<link rel="manifest" href="/static/manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0f1117">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;background:#0f1117;color:#e8eaf6;min-height:100vh}
+  header{background:#1a1d27;border-bottom:1px solid #2e3248;padding:16px 24px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100}
+  .back{color:#7b82a8;text-decoration:none;font-size:1.2rem}
+  .back:hover{color:#e8eaf6}
+  .logo{font-size:1.1rem;font-weight:700}
+  .logo span{color:#00e5a0}
+  main{max-width:960px;margin:0 auto;padding:24px 16px 80px}
+  .sec-title{font-size:.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#7b82a8;margin-bottom:14px}
+  .form-section{background:#1a1d27;border:1px solid #2e3248;border-radius:16px;padding:20px;margin-bottom:24px}
+  .tabs{display:flex;gap:8px;margin-bottom:16px}
+  .tab-btn{flex:1;padding:10px;border:1px solid #2e3248;border-radius:10px;background:transparent;color:#7b82a8;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s}
+  .tab-pagar{background:rgba(255,95,126,.12);border-color:#ff5f7e;color:#ff5f7e}
+  .tab-receber{background:rgba(0,229,160,.12);border-color:#00e5a0;color:#00e5a0}
+  .form-grid{display:grid;gap:10px;grid-template-columns:1fr 1fr}
+  .form-grid .full{grid-column:1/-1}
+  label{display:block;font-size:.75rem;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:#7b82a8;margin-bottom:5px}
+  input,select{width:100%;padding:11px 14px;background:#222537;border:1px solid #2e3248;border-radius:10px;color:#e8eaf6;font-family:'DM Sans',sans-serif;font-size:.95rem;outline:none;transition:border-color .2s}
+  input:focus,select:focus{border-color:#00e5a0}
+  select option{background:#222537}
+  .btn-submit{width:100%;padding:13px;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;margin-top:6px;transition:opacity .2s}
+  .btn-submit:hover{opacity:.85}
+  .btn-pagar{background:#ff5f7e;color:#fff}
+  .btn-receber{background:#00e5a0;color:#0f1117}
+  .lista{background:#1a1d27;border:1px solid #2e3248;border-radius:16px;overflow:hidden;margin-bottom:24px}
+  .lista-header{padding:16px 20px;border-bottom:1px solid #2e3248;display:flex;align-items:center;justify-content:space-between}
+  .conta-row{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid #2e3248;transition:background .15s}
+  .conta-row:last-child{border-bottom:none}
+  .conta-row:hover{background:rgba(255,255,255,.03)}
+  .conta-row.pago{opacity:.45}
+  .tipo-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .dot-pagar{background:#ff5f7e}
+  .dot-receber{background:#00e5a0}
+  .c-info{flex:1;min-width:0}
+  .c-desc{font-size:.9rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .c-meta{font-size:.75rem;color:#7b82a8;margin-top:2px}
+  .c-venc{font-size:.7rem;padding:2px 7px;border-radius:99px;margin-top:4px;display:inline-block;font-weight:600}
+  .venc-ok{background:rgba(0,229,160,.15);color:#00e5a0}
+  .venc-atrasado{background:rgba(255,95,126,.15);color:#ff5f7e}
+  .venc-hoje{background:rgba(255,159,67,.15);color:#ff9f43}
+  .c-valor{font-family:'DM Mono',monospace;font-size:.95rem;font-weight:600;flex-shrink:0}
+  .v-pagar{color:#ff5f7e}
+  .v-receber{color:#00e5a0}
+  .c-actions{display:flex;gap:6px;flex-shrink:0}
+  .btn-acao{background:none;border:1px solid #2e3248;color:#7b82a8;cursor:pointer;font-size:.75rem;padding:4px 8px;border-radius:6px;transition:all .2s;text-decoration:none;font-family:'DM Sans',sans-serif}
+  .btn-acao:hover{color:#e8eaf6;border-color:#7b82a8}
+  .btn-pago-ok{border-color:#00e5a0;color:#00e5a0}
+  .empty{padding:32px;text-align:center;color:#7b82a8;font-size:.9rem}
+  .resumo-contas{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+  .rc{background:#1a1d27;border:1px solid #2e3248;border-radius:16px;padding:18px}
+  .rc::before{content:'';display:block;height:3px;border-radius:16px 16px 0 0;margin:-18px -18px 14px}
+  .rc-pagar::before{background:#ff5f7e}
+  .rc-receber::before{background:#00e5a0}
+  .rc-label{font-size:.72rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#7b82a8;margin-bottom:6px}
+  .rc-val{font-family:'DM Mono',monospace;font-size:1.2rem;font-weight:500}
+  .rc-pagar .rc-val{color:#ff5f7e}
+  .rc-receber .rc-val{color:#00e5a0}
+</style>
+</head>
+<body>
+<header>
+  <a href="/" class="back">&#8592;</a>
+  <div class="logo">💼 Contas a <span>Pagar/Receber</span></div>
+</header>
+<main>
+
+  {% set total_pagar   = pagar|selectattr('pago','equalto',0)|sum(attribute='valor') %}
+  {% set total_receber = receber|selectattr('pago','equalto',0)|sum(attribute='valor') %}
+  <div class="resumo-contas">
+    <div class="rc rc-pagar">
+      <div class="rc-label">A Pagar</div>
+      <div class="rc-val">R$ {{ "%.2f"|format(total_pagar) }}</div>
+    </div>
+    <div class="rc rc-receber">
+      <div class="rc-label">A Receber</div>
+      <div class="rc-val">R$ {{ "%.2f"|format(total_receber) }}</div>
+    </div>
+  </div>
+
+  <!-- FORMULÁRIO -->
+  <div class="form-section">
+    <div class="sec-title">Nova Conta</div>
+    <div class="tabs">
+      <button class="tab-btn tab-pagar" onclick="setTipoConta('pagar')" id="ctab-pagar">↓ A Pagar</button>
+      <button class="tab-btn" onclick="setTipoConta('receber')" id="ctab-receber">↑ A Receber</button>
+    </div>
+    <form method="POST" action="/contas/adicionar">
+      <input type="hidden" name="tipo" id="ctipo" value="pagar">
+      <div class="form-grid">
+        <div class="full">
+          <label>Descrição</label>
+          <input type="text" name="descricao" placeholder="Ex: Fornecedor, aluguel..." required>
+        </div>
+        <div>
+          <label>Valor (R$)</label>
+          <input type="number" name="valor" step="0.01" min="0.01" placeholder="0,00" required>
+        </div>
+        <div>
+          <label>Vencimento</label>
+          <input type="date" name="vencimento" value="{{ hoje.isoformat() }}" required>
+        </div>
+        <div class="full">
+          <button type="submit" class="btn-submit btn-pagar" id="cbtn">+ Adicionar Conta a Pagar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- CONTAS A PAGAR -->
+  <div class="lista">
+    <div class="lista-header">
+      <div class="sec-title" style="margin-bottom:0">Contas a Pagar</div>
+    </div>
+    {% if pagar %}
+      {% for c in pagar %}
+      {% set venc = c.vencimento %}
+      {% set venc_class = 'venc-atrasado' if venc < hoje.isoformat() and not c.pago else ('venc-hoje' if venc == hoje.isoformat() else 'venc-ok') %}
+      <div class="conta-row {% if c.pago %}pago{% endif %}">
+        <div class="tipo-dot dot-pagar"></div>
+        <div class="c-info">
+          <div class="c-desc">{{ c.descricao }}</div>
+          <span class="c-venc {{ venc_class }}">
+            {% if c.pago %}✓ Pago{% elif venc < hoje.isoformat() %}Vencido: {{ venc }}{% elif venc == hoje.isoformat() %}Vence hoje!{% else %}{{ venc }}{% endif %}
+          </span>
+        </div>
+        <div class="c-valor v-pagar">R$ {{ "%.2f"|format(c.valor) }}</div>
+        <div class="c-actions">
+          {% if not c.pago %}
+          <a href="/contas/pagar/{{ c.id }}" class="btn-acao btn-pago-ok">✓ Pago</a>
+          {% endif %}
+          <a href="/contas/excluir/{{ c.id }}" class="btn-acao" onclick="return confirm('Excluir?')">✕</a>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty">Nenhuma conta a pagar cadastrada.</div>
+    {% endif %}
+  </div>
+
+  <!-- CONTAS A RECEBER -->
+  <div class="lista">
+    <div class="lista-header">
+      <div class="sec-title" style="margin-bottom:0">Contas a Receber</div>
+    </div>
+    {% if receber %}
+      {% for c in receber %}
+      {% set venc = c.vencimento %}
+      {% set venc_class = 'venc-atrasado' if venc < hoje.isoformat() and not c.pago else ('venc-hoje' if venc == hoje.isoformat() else 'venc-ok') %}
+      <div class="conta-row {% if c.pago %}pago{% endif %}">
+        <div class="tipo-dot dot-receber"></div>
+        <div class="c-info">
+          <div class="c-desc">{{ c.descricao }}</div>
+          <span class="c-venc {{ venc_class }}">
+            {% if c.pago %}✓ Recebido{% elif venc < hoje.isoformat() %}Atrasado: {{ venc }}{% elif venc == hoje.isoformat() %}Receber hoje!{% else %}{{ venc }}{% endif %}
+          </span>
+        </div>
+        <div class="c-valor v-receber">R$ {{ "%.2f"|format(c.valor) }}</div>
+        <div class="c-actions">
+          {% if not c.pago %}
+          <a href="/contas/pagar/{{ c.id }}" class="btn-acao btn-pago-ok">✓ Recebido</a>
+          {% endif %}
+          <a href="/contas/excluir/{{ c.id }}" class="btn-acao" onclick="return confirm('Excluir?')">✕</a>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty">Nenhuma conta a receber cadastrada.</div>
+    {% endif %}
+  </div>
+</main>
+<script>
+function setTipoConta(tipo) {
+  document.getElementById('ctipo').value = tipo;
+  const bp = document.getElementById('ctab-pagar');
+  const br = document.getElementById('ctab-receber');
+  const btn = document.getElementById('cbtn');
+  if(tipo==='pagar'){
+    bp.className='tab-btn tab-pagar'; br.className='tab-btn';
+    btn.className='btn-submit btn-pagar'; btn.textContent='+ Adicionar Conta a Pagar';
+  } else {
+    br.className='tab-btn tab-receber'; bp.className='tab-btn';
+    btn.className='btn-submit btn-receber'; btn.textContent='+ Adicionar Conta a Receber';
+  }
+}
+</script>
+</body>
+</html>

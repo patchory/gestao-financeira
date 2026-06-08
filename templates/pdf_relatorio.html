@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Relatório {{ meses_nomes[mes-1] }}/{{ ano }}</title>
+<style>
+  @media print { body { margin: 0; } .no-print { display: none; } }
+  body { font-family: Arial, sans-serif; background: #fff; color: #111; max-width: 800px; margin: 0 auto; padding: 32px; }
+  h1 { font-size: 1.4rem; margin-bottom: 4px; }
+  .sub { color: #666; font-size: .9rem; margin-bottom: 24px; }
+  .cards { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 24px; }
+  .card { border: 1px solid #ddd; border-radius: 8px; padding: 12px; text-align: center; }
+  .card-label { font-size: .7rem; color: #666; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+  .card-valor { font-size: 1.1rem; font-weight: 700; }
+  .entrada { color: #00a86b; } .saida { color: #e03; } .lucro { color: #4466ff; } .rent { color: #f80; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+  th { background: #f5f5f5; padding: 8px 10px; font-size: .78rem; text-align: left; border-bottom: 2px solid #ddd; }
+  td { padding: 8px 10px; font-size: .85rem; border-bottom: 1px solid #eee; }
+  .btn-print { background: #4466ff; color: #fff; border: none; padding: 10px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer; margin-bottom: 20px; }
+  .btn-print:hover { opacity: .85; }
+  .negativo { color: #e03; }
+</style>
+</head>
+<body>
+<button class="btn-print no-print" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
+<h1>💼 Relatório Financeiro — {{ meses_nomes[mes-1] }}/{{ ano }}</h1>
+<div class="sub">Gerado em {{ hoje.strftime('%d/%m/%Y') }}</div>
+
+<div class="cards">
+  <div class="card">
+    <div class="card-label">Entradas</div>
+    <div class="card-valor entrada">R$ {{ "%.2f"|format(resumo.entradas) }}</div>
+  </div>
+  <div class="card">
+    <div class="card-label">Saídas</div>
+    <div class="card-valor saida">R$ {{ "%.2f"|format(resumo.saidas) }}</div>
+  </div>
+  <div class="card">
+    <div class="card-label">Lucro</div>
+    <div class="card-valor lucro {% if resumo.lucro < 0 %}negativo{% endif %}">R$ {{ "%.2f"|format(resumo.lucro) }}</div>
+  </div>
+  <div class="card">
+    <div class="card-label">Rentabilidade</div>
+    <div class="card-valor rent">{{ "%.1f"|format(resumo.rentabilidade) }}%</div>
+  </div>
+</div>
+
+{% if resumo.ads > 0 %}
+<h2 style="font-size:1rem;margin-bottom:8px">Shopee Ads</h2>
+<table>
+  <tr><th>Gasto em Ads</th><th>ROAS</th><th>% do Faturamento</th></tr>
+  <tr><td>R$ {{ "%.2f"|format(resumo.ads) }}</td><td>{{ "%.2f"|format(resumo.roas) }}x</td><td>{{ "%.1f"|format(resumo.pct_ads) }}%</td></tr>
+</table>
+{% endif %}
+
+{% if resumo.saidas_por_categoria %}
+<h2 style="font-size:1rem;margin-bottom:8px">Despesas por Categoria</h2>
+<table>
+  <tr><th>Categoria</th><th>Valor</th><th>% das Saídas</th></tr>
+  {% for cat, val in resumo.saidas_por_categoria.items()|sort(attribute='1', reverse=True) %}
+  <tr>
+    <td>{{ cat }}</td>
+    <td>R$ {{ "%.2f"|format(val) }}</td>
+    <td>{{ "%.1f"|format(val/resumo.saidas*100 if resumo.saidas > 0 else 0) }}%</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+
+<h2 style="font-size:1rem;margin-bottom:8px">Lançamentos do Mês</h2>
+<table>
+  <tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Valor</th></tr>
+  {% for t in transacoes %}
+  <tr>
+    <td>{{ t.data }}</td>
+    <td>{{ t.descricao }}</td>
+    <td>{{ t.categoria or '—' }}</td>
+    <td class="{{ 'entrada' if t.tipo=='entrada' else 'saida' }}">
+      {{ '+' if t.tipo=='entrada' else '-' }}R$ {{ "%.2f"|format(t.valor) }}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+</body>
+</html>

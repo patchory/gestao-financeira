@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login — Gestão Financeira</title>
+<link rel="manifest" href="/static/manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Gestão">
+<link rel="apple-touch-icon" href="/static/icon-192.png">
+<meta name="theme-color" content="#0f1117">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;background:#0f1117;color:#e8eaf6;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .card{background:#1a1d27;border:1px solid #2e3248;border-radius:20px;padding:40px 32px;width:100%;max-width:380px}
+  .logo{font-size:1.5rem;font-weight:700;text-align:center;margin-bottom:8px}
+  .logo span{color:#00e5a0}
+  .sub{text-align:center;color:#7b82a8;font-size:0.9rem;margin-bottom:32px}
+  label{display:block;font-size:0.75rem;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:#7b82a8;margin-bottom:6px}
+  input{width:100%;padding:13px 16px;background:#222537;border:1px solid #2e3248;border-radius:12px;color:#e8eaf6;font-family:'DM Sans',sans-serif;font-size:1rem;outline:none;transition:border-color .2s;margin-bottom:16px}
+  input:focus{border-color:#00e5a0}
+  .btn{width:100%;padding:14px;background:#00e5a0;border:none;border-radius:12px;color:#0f1117;font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+  .btn:hover{opacity:.85}
+  .erro{background:rgba(255,95,126,.12);border:1px solid #ff5f7e;border-radius:10px;padding:12px;color:#ff5f7e;font-size:0.85rem;text-align:center;margin-bottom:16px}
+  .hint{text-align:center;color:#7b82a8;font-size:0.78rem;margin-top:16px}
+  .hint code{background:#222537;padding:2px 8px;border-radius:6px;font-family:'DM Mono',monospace;color:#00e5a0}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">💼 Gestão <span>Financeira</span></div>
+  <div class="sub">Acesso protegido por senha</div>
+  {% if erro %}
+  <div class="erro">{{ erro }}</div>
+  {% endif %}
+  <form method="POST">
+    <label>Senha</label>
+    <input type="password" name="senha" placeholder="Digite sua senha" autofocus required>
+    <button type="submit" class="btn">Entrar</button>
+  </form>
+  <div class="hint">Senha padrão: <code>minhaempresa123</code></div>
+</div>
+</body>
+</html>
