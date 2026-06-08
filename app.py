@@ -9,7 +9,7 @@ app.secret_key = 'gestao_financeira_secret_2024'
 DB_PATH = '/tmp/empresa.db'
 
 # ── Senha de acesso ──────────────────────────────────────────
-SENHA_ACESSO = 'minhaempresa123'  # ← troque aqui
+SENHA_ACESSO = 'tiago123'  # ← troque aqui
 
 CATEGORIAS_SAIDA = [
     'Shopee Ads', 'Marketing', 'Papelaria / Escritório',
